@@ -4,7 +4,6 @@ import csv
 from datetime import datetime
 from data_entry import get_amount, get_category, get_date, get_description
 
-
 class CSV:
     CSV_FILE = "finance_data.csv"
     COLUMNS = ["date", "amount", "category", "description"]
@@ -68,7 +67,9 @@ class CSV:
     def get_transactions(cls, start_date, end_date):
         """Retrieves transactions within the specified date range."""
         df = pd.read_csv(cls.CSV_FILE)
-        df["date"] = pd.to_datetime(df["date"], format=CSV.FORMAT)
+        df["date"] = pd.to_datetime(df["date"], format=CSV.FORMAT, errors='coerce')
+        df = df.dropna(subset=["date"])
+        
         start_date = datetime.strptime(start_date, CSV.FORMAT)
         end_date = datetime.strptime(end_date, CSV.FORMAT)
 
@@ -79,7 +80,7 @@ class CSV:
             print("No transaction found in the given date range.")
         else:
             print(
-                f"Transaction from {start_date.strftime(CSV.FORMAT)} to {end_date.strftime(CSV.FORMAT)}"
+                f"Transactions from {start_date.strftime(CSV.FORMAT)} to {end_date.strftime(CSV.FORMAT)}"
             )
             print(
                 filtered_df.to_string(
@@ -152,10 +153,10 @@ def main():
     """Main function to run the application."""
     while True:
         print("\n1. Add a new transaction")
-        print("\n2. Update an existing transaction")
-        print("\n3. Delete a transaction")
-        print("\n4. View transactions and summary within a date range")
-        print("\n5. Exit")
+        print("2. Update an existing transaction")
+        print("3. Delete a transaction")
+        print("4. View transactions and summary within a date range")
+        print("5. Exit")
         choice = input("Enter your choice (1-5): ")
 
         if choice == "1":
